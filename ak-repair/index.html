@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#000000">
+<title>AKARA แจ้งซ่อม</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: #000; color: #f2f2f0;
+    font-family: "Leelawadee UI", "Segoe UI", Tahoma, sans-serif; text-align: center; padding: 24px; }
+  .box { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .mark { width: 56px; height: 56px; display: grid; place-items: center; background: #fff; color: #000; font-weight: 700; font-size: 30px; letter-spacing: -.04em; }
+  .name { font-size: 12px; letter-spacing: .5em; padding-left: .5em; color: rgba(255,255,255,.75); }
+  .msg { font-size: 15px; color: rgba(255,255,255,.75); line-height: 1.7; }
+  a.btn { display: none; margin-top: 4px; padding: 12px 26px; background: #fff; color: #000; font-weight: 700; text-decoration: none; }
+  .err a.btn { display: inline-block; }
+</style>
+</head>
+<body>
+<div class="box" id="box">
+  <div class="mark" aria-hidden="true">A</div>
+  <div class="name">AKARA · REPAIR</div>
+  <div class="msg" id="msg">กำลังเปิด… / Opening…</div>
+  <a class="btn" id="btn" href="#">เปิด · Open</a>
+</div>
+<script>
+// AKARA Repair front door. Reads the current server link from url.json (updated by the Ubuntu
+// server every 5 minutes) and forwards, keeping the request:
+//   ?go=/it/users     -> <server>/it/users
+//   ?go=/z/<qr token> -> <server>/z/<qr token>
+(function () {
+  'use strict';
+  var q = new URLSearchParams(location.search);
+  var go = q.get('go') || '/';
+  q.delete('go');
+  if (go.charAt(0) !== '/' || go.indexOf('//') === 0 || go.indexOf('\\') !== -1) go = '/'; // only paths on our own server
+  function target(base) {
+    var u = new URL(go, base);
+    q.forEach(function (v, k) { if (!u.searchParams.has(k)) u.searchParams.set(k, v); });
+    u.hash = location.hash;
+    return u.toString();
+  }
+  function fail() {
+    document.getElementById('box').className = 'box err';
+    document.getElementById('msg').textContent = 'เปิดไม่สำเร็จ ลองกดอีกครั้ง / Could not open — tap to retry';
+    document.getElementById('btn').href = location.href;
+  }
+  fetch('url.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j || !/^https:\/\/[a-z0-9-]+\.trycloudflare\.com$|^https:\/\/[a-z0-9.-]+$/i.test(j.url)) throw new Error('bad url');
+      var t = target(j.url);
+      document.getElementById('btn').href = t;
+      location.replace(t);
+      setTimeout(fail, 8000);
+    })
+    .catch(fail);
+})();
+</script>
+<noscript><p style="color:#fff">กรุณาเปิด JavaScript / Please enable JavaScript.</p></noscript>
+</body>
+</html>

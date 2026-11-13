@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#000000">
+<title>AKARA แจ้งซ่อม</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: #000; color: #f2f2f0;
+    font-family: "Leelawadee UI", "Segoe UI", Tahoma, sans-serif; text-align: center; padding: 24px; }
+  .box { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .mark { width: 56px; height: 56px; display: grid; place-items: center; background: #fff; color: #000; font-weight: 700; font-size: 30px; letter-spacing: -.04em; }
+  .msg { font-size: 15px; color: rgba(255,255,255,.75); line-height: 1.7; }
+  a.btn { display: none; margin-top: 4px; padding: 12px 26px; background: #fff; color: #000; font-weight: 700; text-decoration: none; }
+  .err a.btn { display: inline-block; }
+</style>
+</head>
+<body>
+<div class="box" id="box">
+  <div class="mark" aria-hidden="true">A</div>
+  <div class="msg" id="msg">กำลังเข้าสู่ระบบ… / Signing you in…</div>
+  <a class="btn" id="btn" href="../">เริ่มใหม่ · Start again</a>
+</div>
+<script>
+// Registered Entra redirect URI: https://hanumanocc.github.io/ak-repair/callback/
+// Forwards the sign-in response (code + state, or error) to <server>/auth/callback unchanged.
+// The server exchanges the code itself (PKCE + client secret); the code alone is useless and single-use.
+(function () {
+  'use strict';
+  var q = new URLSearchParams(location.search);
+  var ok = (q.has('code') && q.has('state')) || q.has('error');
+  function fail() {
+    document.getElementById('box').className = 'box err';
+    document.getElementById('msg').textContent = 'เข้าสู่ระบบไม่สำเร็จ กรุณาเริ่มใหม่ / Sign-in did not complete — please start again';
+  }
+  if (!ok) { fail(); return; }
+  fetch('../url.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j || !/^https:\/\/[a-z0-9-]+\.trycloudflare\.com$|^https:\/\/[a-z0-9.-]+$/i.test(j.url)) throw new Error('bad url');
+      var u = new URL('/auth/callback', j.url);
+      u.search = location.search;
+      u.hash = location.hash;
+      location.replace(u.toString());
+      setTimeout(fail, 8000);
+    })
+    .catch(fail);
+})();
+</script>
+<noscript><p style="color:#fff">กรุณาเปิด JavaScript / Please enable JavaScript.</p></noscript>
+</body>
+</html>
