@@ -37,7 +37,7 @@
   'use strict';
   function fail() {
     document.getElementById('box').className = 'box err';
-    document.getElementById('msg').innerHTML = '<span>เปิดไม่สำเร็จ แตะเพื่อลองอีกครั้ง</span><span class="en" lang="en">Couldn't open. Tap to try again.</span>';
+    document.getElementById('msg').innerHTML = '<span>เปิดไม่สำเร็จ แตะเพื่อลองอีกครั้ง</span><span class="en" lang="en">Couldn&#39;t open. Tap to try again.</span>';
     document.getElementById('btn').href = location.href;
   }
   fetch('url.json?t=' + Date.now(), { cache: 'no-store' })
