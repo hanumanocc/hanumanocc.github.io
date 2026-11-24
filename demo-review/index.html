@@ -5,25 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#F6F5F2">
-<title>AKARA · รีวิว Dashboard</title>
+<title>AKARA · รีวิว Dashboard · Dashboard Review</title>
 <link rel="icon" href="akara-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&display=swap">
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
   body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: #F6F5F2; color: #1A1A1A;
-    font-family: "Leelawadee UI", "Segoe UI", Tahoma, sans-serif; text-align: center; padding: 24px; }
+    font-family: "Inter", "Noto Sans Thai", "Leelawadee UI", "Segoe UI", Tahoma, sans-serif; text-align: center; padding: 24px; }
   .box { display: flex; flex-direction: column; align-items: center; gap: 16px; }
   img { width: 96px; height: auto; }
-  .msg { font-size: 15px; color: #5A5A5A; line-height: 1.7; }
-  a.btn { display: none; margin-top: 4px; padding: 12px 26px; border-radius: 12px; background: #AE3D28; color: #fff; font-weight: 700; text-decoration: none; }
+  .msg { font-size: 16px; color: #1A1A1A; line-height: 1.5; }
+  .msg span { display: block; }
+  .msg .en { margin-top: 2px; font-size: 14px; color: #6B6B6B; }
+  .sep { opacity: .85; font-weight: 400; }
+  a.btn { display: none; margin-top: 4px; min-height: 44px; padding: 12px 26px; border-radius: 12px; background: #AE3D28; color: #fff; font-weight: 700; text-decoration: none; }
   .err a.btn { display: inline-block; }
 </style>
 </head>
 <body>
 <div class="box" id="box">
   <img src="akara-black.png" alt="AKARA">
-  <div class="msg" id="msg">กำลังเปิดหน้ารีวิว…</div>
-  <a class="btn" id="btn" href="#">เปิดหน้ารีวิว</a>
+  <div class="msg" id="msg"><span>กำลังเปิดหน้ารีวิว…</span><span class="en" lang="en">Opening review…</span></div>
+  <a class="btn" id="btn" href="#">เปิดหน้ารีวิว<span class="sep"> · </span><span lang="en">Open review</span></a>
 </div>
 <script>
 // AKARA Tickets · Review front door. Reads the current server link from url.json (kept up to date by the Ubuntu server every
@@ -32,7 +37,7 @@
   'use strict';
   function fail() {
     document.getElementById('box').className = 'box err';
-    document.getElementById('msg').textContent = 'เปิดไม่สำเร็จ — กดเพื่อลองอีกครั้ง';
+    document.getElementById('msg').innerHTML = '<span>เปิดไม่สำเร็จ แตะเพื่อลองอีกครั้ง</span><span class="en" lang="en">Couldn't open. Tap to try again.</span>';
     document.getElementById('btn').href = location.href;
   }
   fetch('url.json?t=' + Date.now(), { cache: 'no-store' })
@@ -47,6 +52,6 @@
     .catch(fail);
 })();
 </script>
-<noscript><p>กรุณาเปิด JavaScript</p></noscript>
+<noscript><p>กรุณาเปิด JavaScript<br><span lang="en" style="color:#6B6B6B;font-size:14px">Please enable JavaScript</span></p></noscript>
 </body>
 </html>
